@@ -39,8 +39,14 @@ func main() {
 	router.Use(mwLogger.New(log))
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
-	router.Post("/api/v1/url", save.New(log, storage))
-	router.Get("/{alias}", redirect.New(log, storage))
+
+	router.Route("/api/v1/url", func(r chi.Router) {
+		r.Use(middleware.BasicAuth("url-shortener", map[string]string{
+			cfg.HTTPServer.User: cfg.HTTPServer.Password,
+		}))
+		r.Post("/", save.New(log, storage))
+	})
+	router.Get("/api/v1/{alias}", redirect.New(log, storage))
 
 	log.Info("starting server", slog.String("address", cfg.Address))
 
@@ -57,8 +63,6 @@ func main() {
 	}
 
 	log.Error("server stopped")
-
-	// todo: run server
 }
 
 func setupLogger(env string) *slog.Logger {

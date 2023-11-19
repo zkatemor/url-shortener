@@ -67,7 +67,7 @@ func (s *Storage) SaveURL(urlToSave string, alias string) error {
 func (s *Storage) GetURL(alias string) (string, error) {
 	const op = "storage.sqlite.SaveURL"
 
-	stmt, err := s.db.Prepare("select url from url where alies = ?")
+	stmt, err := s.db.Prepare("select url from url where alias = ?")
 	if err != nil {
 		return "", fmt.Errorf("%s: prepare statement %w", op, err)
 	}
@@ -87,7 +87,7 @@ func (s *Storage) GetURL(alias string) (string, error) {
 func (s *Storage) DeleteURL(alias string) error {
 	const op = "storage.sqlite.SaveURL"
 
-	stmt, err := s.db.Prepare("delete from url where alies = ?")
+	stmt, err := s.db.Prepare("delete from url where alias = ?")
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
